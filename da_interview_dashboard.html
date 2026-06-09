@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DA Interview Prep — 15-Day Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f1117; --bg2:#161b26; --bg3:#1d2433; --bg4:#242c3d;
+  --border:#2a3347; --border2:#3a4560;
+  --txt:#e8eaf0; --txt2:#8b95a8; --txt3:#5a6478;
+  --accent:#4f8ef7; --accent2:#3b6fd4;
+  --green:#2dd882; --green-bg:#0d2e1e;
+  --amber:#f5a623; --amber-bg:#2a1f08;
+  --coral:#ff6b6b; --coral-bg:#2a1010;
+  --purple:#b57af5; --purple-bg:#1e1030;
+  --teal:#3dd6c8; --teal-bg:#0a2422;
+  --pink:#f57ab5; --pink-bg:#2a0f1e;
+  --radius:10px; --radius-sm:6px;
+  --font:'Inter',sans-serif; --mono:'JetBrains Mono',monospace;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--txt);min-height:100vh;line-height:1.6}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* LAYOUT */
+.shell{display:flex;min-height:100vh}
+.sidebar{width:220px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);padding:24px 0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.main{flex:1;overflow:auto}
+.logo{padding:0 20px 24px;border-bottom:1px solid var(--border);margin-bottom:16px}
+.logo h2{font-size:14px;font-weight:600;color:var(--txt);letter-spacing:.02em}
+.logo p{font-size:11px;color:var(--txt3);margin-top:2px}
+.nav-section{padding:4px 12px 2px;font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.1em;margin-top:10px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 20px;font-size:13px;color:var(--txt2);cursor:pointer;border-radius:0;transition:all .15s;position:relative}
+.nav-item:hover{color:var(--txt);background:var(--bg3)}
+.nav-item.active{color:var(--txt);background:var(--bg3)}
+.nav-item.active::before{content:'';position:absolute;left:0;top:4px;bottom:4px;width:2px;background:var(--accent);border-radius:0 2px 2px 0}
+.nav-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.nav-badge{margin-left:auto;font-size:10px;padding:1px 6px;border-radius:999px;background:var(--bg4);color:var(--txt3)}
+.progress-mini{padding:16px 20px 0;margin-top:auto;border-top:1px solid var(--border)}
+.progress-mini p{font-size:11px;color:var(--txt3);margin-bottom:6px}
+.mini-track{height:4px;background:var(--border);border-radius:2px}
+.mini-fill{height:4px;background:var(--green);border-radius:2px;transition:width .4s}
+.mini-stat{font-size:12px;color:var(--txt2);margin-top:5px;font-weight:500}
+.watermark{padding:12px 20px 16px;font-size:11px;font-family:var(--mono);color:var(--txt3);letter-spacing:.04em;opacity:.7}
+
+/* CONTENT */
+.content{padding:32px 32px 60px;max-width:1000px}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* PAGE HEADER */
+.page-header{margin-bottom:28px}
+.page-header h1{font-size:24px;font-weight:600;color:var(--txt);margin-bottom:4px}
+.page-header p{font-size:14px;color:var(--txt2)}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px}
+.stat-card .val{font-size:26px;font-weight:600;color:var(--txt)}
+.stat-card .lbl{font-size:12px;color:var(--txt2);margin-top:2px}
+.stat-card .sub{font-size:11px;color:var(--txt3);margin-top:1px}
+
+/* PROGRESS SECTION */
+.section-block{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;margin-bottom:20px}
+.section-title{font-size:13px;font-weight:600;color:var(--txt);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.prog-bar-outer{height:8px;background:var(--bg4);border-radius:4px;margin-bottom:10px}
+.prog-bar-inner{height:8px;border-radius:4px;transition:width .5s}
+.track-stats{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.ts{text-align:center;padding:10px 6px;background:var(--bg3);border-radius:var(--radius-sm);border:1px solid var(--border)}
+.ts .tnum{font-size:16px;font-weight:600}
+.ts .tnm{font-size:10px;color:var(--txt2);margin-top:2px}
+
+/* ROADMAP GRID */
+.week-sep{display:flex;align-items:center;gap:12px;margin:20px 0 12px}
+.week-sep span{font-size:11px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+.week-sep div{flex:1;height:1px;background:var(--border)}
+.day-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;margin-bottom:4px}
+.day-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:border-color .15s,background .15s;position:relative}
+.day-card:hover{border-color:var(--border2);background:var(--bg3)}
+.day-card.completed{opacity:.5}
+.day-card.completed::after{content:'✓ Done';position:absolute;top:12px;right:44px;font-size:11px;color:var(--green);font-weight:500}
+.dc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.dc-num{font-size:11px;font-weight:500;color:var(--txt3);letter-spacing:.07em;text-transform:uppercase}
+.cat-badge{font-size:11px;padding:3px 9px;border-radius:999px;font-weight:500}
+.day-card h3{font-size:14px;font-weight:500;color:var(--txt);margin-bottom:3px;line-height:1.4}
+.day-card .fx{font-size:12px;color:var(--txt2);margin-bottom:9px;line-height:1.45}
+.tag-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px}
+.tag{font-size:11px;background:var(--bg4);color:var(--txt3);padding:2px 7px;border-radius:var(--radius-sm);border:1px solid var(--border)}
+.dc-footer{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--border)}
+.dc-time{font-size:12px;color:var(--txt2)}
+.check-btn{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border2);background:transparent;cursor:pointer;font-size:12px;color:var(--txt2);display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+.check-btn.on{background:var(--green);border-color:var(--green);color:#000;font-weight:600}
+
+/* RESOURCES TAB */
+.res-section{margin-bottom:28px}
+.res-section h2{font-size:16px;font-weight:600;color:var(--txt);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.res-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.res-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;transition:border-color .15s}
+.res-card:hover{border-color:var(--border2)}
+.res-card .rc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px}
+.res-card h4{font-size:13px;font-weight:500;color:var(--txt);line-height:1.3}
+.res-card p{font-size:12px;color:var(--txt2);margin-bottom:10px;line-height:1.45}
+.res-link{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--accent);font-weight:500}
+.res-link:hover{color:#7aadff}
+.free-tag{font-size:10px;padding:2px 7px;border-radius:999px;background:var(--green-bg);color:var(--green);font-weight:500;flex-shrink:0;margin-top:2px}
+.paid-tag{font-size:10px;padding:2px 7px;border-radius:999px;background:var(--amber-bg);color:var(--amber);font-weight:500;flex-shrink:0;margin-top:2px}
+
+/* FAQ TAB */
+.faq-intro{font-size:14px;color:var(--txt2);margin-bottom:24px;line-height:1.6}
+.faq-section{margin-bottom:30px}
+.faq-section h2{font-size:15px;font-weight:600;color:var(--txt);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.faq-item{border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;overflow:hidden;transition:border-color .15s}
+.faq-item.open{border-color:var(--border2)}
+.faq-q{padding:14px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:13px;font-weight:500;color:var(--txt);background:var(--bg2);transition:background .15s}
+.faq-q:hover{background:var(--bg3)}
+.faq-q .arrow{color:var(--txt3);font-size:16px;flex-shrink:0;transition:transform .2s}
+.faq-item.open .arrow{transform:rotate(90deg)}
+.faq-a{display:none;padding:14px 16px;font-size:13px;color:var(--txt2);line-height:1.7;background:var(--bg3);border-top:1px solid var(--border)}
+.faq-item.open .faq-a{display:block}
+.faq-a code{font-family:var(--mono);font-size:12px;background:var(--bg4);padding:2px 5px;border-radius:4px;color:var(--teal)}
+.faq-a pre{font-family:var(--mono);font-size:12px;background:var(--bg4);padding:12px 14px;border-radius:var(--radius-sm);margin:10px 0;color:var(--txt);line-height:1.6;overflow-x:auto;border:1px solid var(--border)}
+.faq-a strong{color:var(--txt);font-weight:500}
+.faq-a ul,.faq-a ol{padding-left:18px;margin:8px 0}
+.faq-a li{margin-bottom:5px}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;align-items:center;justify-content:center;padding:20px}
+.modal-bg.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;max-width:540px;width:100%;padding:26px;max-height:88vh;overflow-y:auto;position:relative}
+.modal h2{font-size:18px;font-weight:600;color:var(--txt);margin-bottom:5px;padding-right:32px}
+.modal .msub{font-size:13px;color:var(--txt2);margin-bottom:18px}
+.modal-section h4{font-size:11px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:9px}
+.modal-section ul{list-style:none;margin-bottom:18px}
+.modal-section ul li{font-size:13px;color:var(--txt);padding:6px 0;border-bottom:1px solid var(--border);display:flex;gap:9px;line-height:1.55}
+.modal-section ul li:last-child{border-bottom:none}
+.li-dot{color:var(--green);flex-shrink:0;font-size:14px;line-height:1.4}
+.modal-links{display:flex;flex-direction:column;gap:7px;margin-bottom:6px}
+.mlink{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;color:var(--accent);transition:border-color .15s}
+.mlink:hover{border-color:var(--border2);text-decoration:none;color:#7aadff}
+.mlink .mlink-badge{font-size:10px;padding:1px 6px;border-radius:999px;margin-left:auto;flex-shrink:0}
+.close-btn{position:absolute;top:18px;right:18px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--txt3);line-height:1}
+.close-btn:hover{color:var(--txt)}
+
+/* FILTER BAR */
+.filter-bar{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:20px;align-items:center}
+.filter-bar>span{font-size:12px;color:var(--txt3)}
+.fpill{font-size:12px;padding:5px 13px;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--txt2);cursor:pointer;transition:all .15s}
+.fpill:hover{background:var(--bg3);color:var(--txt)}
+.fpill.on{background:var(--bg3);color:var(--txt);border-color:var(--border2)}
+
+/* COLOR CLASSES */
+.c-sql{background:#0d2040;color:#7ab0f0}
+.c-py{background:#0d2a12;color:#6acf80}
+.c-st{background:#1e1040;color:#b090f0}
+.c-bi{background:#2a1a00;color:#f0b040}
+.c-cs{background:#2a0a18;color:#f080b0}
+.c-bh{background:#2a0a00;color:#f09060}
+.dot-sql{background:#5a90f0}
+.dot-py{background:#60cf80}
+.dot-st{background:#a080f0}
+.dot-bi{background:#f0b040}
+.dot-cs{background:#f080b0}
+.dot-bh{background:#f09060}
+
+@media(max-width:768px){
+  .sidebar{display:none}
+  .content{padding:20px 16px 40px}
+  .stat-row{grid-template-columns:repeat(2,1fr)}
+  .track-stats{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <h2>DA Interview Prep</h2>
+    <p>15-Day Roadmap</p>
+  </div>
+  <div class="nav-section">Navigate</div>
+  <div class="nav-item active" onclick="switchTab('roadmap',this)">
+    <span>📅</span> Roadmap
+  </div>
+  <div class="nav-item" onclick="switchTab('resources',this)">
+    <span>🔗</span> Resources
+  </div>
+  <div class="nav-item" onclick="switchTab('faq',this)">
+    <span>❓</span> FAQ & Questions
+  </div>
+
+  <div class="nav-section" style="margin-top:16px">Topics</div>
+  <div class="nav-item" onclick="switchTab('roadmap',document.querySelector('.nav-item')); filterDays('s')">
+    <span class="nav-dot dot-sql"></span> SQL <span class="nav-badge">4 days</span>
+  </div>
+  <div class="nav-item" onclick="switchTab('roadmap',document.querySelector('.nav-item')); filterDays('p')">
+    <span class="nav-dot dot-py"></span> Python <span class="nav-badge">2 days</span>
+  </div>
+  <div class="nav-item" onclick="switchTab('roadmap',document.querySelector('.nav-item')); filterDays('st')">
+    <span class="nav-dot dot-st"></span> Statistics <span class="nav-badge">3 days</span>
+  </div>
+  <div class="nav-item" onclick="switchTab('roadmap',document.querySelector('.nav-item')); filterDays('bi')">
+    <span class="nav-dot dot-bi"></span> BI & Viz <span class="nav-badge">2 days</span>
+  </div>
+  <div class="nav-item" onclick="switchTab('roadmap',document.querySelector('.nav-item')); filterDays('cs')">
+    <span class="nav-dot dot-cs"></span> Case Study <span class="nav-badge">3 days</span>
+  </div>
+  <div class="nav-item" onclick="switchTab('roadmap',document.querySelector('.nav-item')); filterDays('bh')">
+    <span class="nav-dot dot-bh"></span> Behavioral <span class="nav-badge">1 day</span>
+  </div>
+
+  <div class="progress-mini">
+    <p>Overall progress</p>
+    <div class="mini-track"><div class="mini-fill" id="mini-fill" style="width:0%"></div></div>
+    <div class="mini-stat" id="mini-stat">0 / 15 days</div>
+  </div>
+  <div class="watermark">namratha@2026</div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+<div class="content">
+
+<!-- ===== ROADMAP TAB ===== -->
+<div class="tab-panel active" id="tab-roadmap">
+  <div class="page-header">
+    <h1>15-Day Interview Roadmap</h1>
+    <p>30–60 min daily · Check off each day · Click any card for details and resources</p>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-card"><div class="val" id="done-count">0</div><div class="lbl">Days completed</div><div class="sub">of 15 total</div></div>
+    <div class="stat-card"><div class="val" id="done-pct">0%</div><div class="lbl">Progress</div><div class="sub">keep going!</div></div>
+    <div class="stat-card"><div class="val">~13h</div><div class="lbl">Total study time</div><div class="sub">avg 52 min/day</div></div>
+    <div class="stat-card"><div class="val">6</div><div class="lbl">Topic tracks</div><div class="sub">SQL to Behavioral</div></div>
+  </div>
+
+  <div class="section-block">
+    <div class="section-title">Track breakdown</div>
+    <div class="prog-bar-outer"><div class="prog-bar-inner" id="main-prog" style="width:0%;background:var(--green)"></div></div>
+    <div class="track-stats" id="track-stats">
+      <div class="ts"><div class="tnum" style="color:#5a90f0" id="ts-s">0/4</div><div class="tnm">SQL</div></div>
+      <div class="ts"><div class="tnum" style="color:#60cf80" id="ts-p">0/2</div><div class="tnm">Python</div></div>
+      <div class="ts"><div class="tnum" style="color:#a080f0" id="ts-st">0/3</div><div class="tnm">Stats</div></div>
+      <div class="ts"><div class="tnum" style="color:#f0b040" id="ts-bi">0/2</div><div class="tnm">BI & Viz</div></div>
+      <div class="ts"><div class="tnum" style="color:#f080b0" id="ts-cs">0/3</div><div class="tnm">Case</div></div>
+      <div class="ts"><div class="tnum" style="color:#f09060" id="ts-bh">0/1</div><div class="tnm">Behavioral</div></div>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <span>Filter:</span>
+    <button class="fpill on" data-f="all">All days</button>
+    <button class="fpill" data-f="s">SQL</button>
+    <button class="fpill" data-f="p">Python</button>
+    <button class="fpill" data-f="st">Stats</button>
+    <button class="fpill" data-f="bi">BI & Viz</button>
+    <button class="fpill" data-f="cs">Case</button>
+    <button class="fpill" data-f="bh">Behavioral</button>
+  </div>
+
+  <div id="day-grid-container"></div>
+</div>
+
+<!-- ===== RESOURCES TAB ===== -->
+<div class="tab-panel" id="tab-resources">
+  <div class="page-header">
+    <h1>Study Resources</h1>
+    <p>Curated free and paid resources for every topic track — with direct links</p>
+  </div>
+
+  <div class="res-section">
+    <h2><span style="color:#5a90f0">◉</span> SQL Resources</h2>
+    <div class="res-grid">
+      <div class="res-card">
+        <div class="rc-top"><h4>LeetCode SQL 50</h4><span class="free-tag">Free</span></div>
+        <p>The gold standard for SQL interview prep. 50 curated problems covering joins, window functions, aggregations, and subqueries.</p>
+        <a class="res-link" href="https://leetcode.com/studyplan/top-sql-50/" target="_blank">→ leetcode.com/studyplan/top-sql-50</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>StrataScratch</h4><span class="free-tag">Free tier</span></div>
+        <p>Real interview questions from companies like Airbnb, Amazon, Google. Includes Python + SQL. Excellent for analyst roles.</p>
+        <a class="res-link" href="https://platform.stratascratch.com" target="_blank">→ platform.stratascratch.com</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>Mode Analytics SQL Tutorial</h4><span class="free-tag">Free</span></div>
+        <p>Excellent structured tutorial covering all SQL levels with a real in-browser editor. Chapters on basics through window functions.</p>
+        <a class="res-link" href="https://mode.com/sql-tutorial" target="_blank">→ mode.com/sql-tutorial</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>SQLZoo</h4><span class="free-tag">Free</span></div>
+        <p>Interactive SQL exercises in the browser. Great for practicing JOINs, subqueries, and SUM/COUNT across realistic tables.</p>
+        <a class="res-link" href="https://sqlzoo.net" target="_blank">→ sqlzoo.net</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>DataLemur</h4><span class="free-tag">Free</span></div>
+        <p>SQL and Python interview questions from top tech companies. Great explanations with common mistakes and hints.</p>
+        <a class="res-link" href="https://datalemur.com" target="_blank">→ datalemur.com</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>DB-Fiddle</h4><span class="free-tag">Free</span></div>
+        <p>Browser-based SQL sandbox supporting PostgreSQL, MySQL, SQLite. Build your own tables and test queries instantly.</p>
+        <a class="res-link" href="https://www.db-fiddle.com" target="_blank">→ db-fiddle.com</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="res-section">
+    <h2><span style="color:#60cf80">◉</span> Python / pandas Resources</h2>
+    <div class="res-grid">
+      <div class="res-card">
+        <div class="rc-top"><h4>Kaggle Learn — Python & pandas</h4><span class="free-tag">Free</span></div>
+        <p>Structured micro-courses with exercises. Covers pandas, data cleaning, EDA. Includes certificates. Best starting point.</p>
+        <a class="res-link" href="https://www.kaggle.com/learn" target="_blank">→ kaggle.com/learn</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>StrataScratch — Python track</h4><span class="free-tag">Free tier</span></div>
+        <p>Same real interview questions as SQL track but solved in pandas. Great to practice translating SQL logic to Python.</p>
+        <a class="res-link" href="https://platform.stratascratch.com/coding?code_type=2" target="_blank">→ stratascratch.com Python</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>Real Python — pandas tutorials</h4><span class="free-tag">Free</span></div>
+        <p>In-depth tutorials on pandas operations, time series, merging, groupby. Clear explanations with real examples throughout.</p>
+        <a class="res-link" href="https://realpython.com/pandas-dataframe" target="_blank">→ realpython.com/pandas-dataframe</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>Google Colab</h4><span class="free-tag">Free</span></div>
+        <p>Free cloud Jupyter notebook with GPU. No setup. Import any CSV from Google Drive or URL and start EDA immediately.</p>
+        <a class="res-link" href="https://colab.research.google.com" target="_blank">→ colab.research.google.com</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>seaborn documentation</h4><span class="free-tag">Free</span></div>
+        <p>Official seaborn gallery with code. Essential reference for heatmaps, pairplots, boxplots, violin plots, and regression plots.</p>
+        <a class="res-link" href="https://seaborn.pydata.org/examples" target="_blank">→ seaborn.pydata.org/examples</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>LeetCode Python (pandas)</h4><span class="free-tag">Free</span></div>
+        <p>LeetCode now supports pandas for many SQL-equivalent problems. Great for practicing DataFrame operations under time pressure.</p>
+        <a class="res-link" href="https://leetcode.com/studyplan/introduction-to-pandas/" target="_blank">→ leetcode.com — Intro to pandas</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="res-section">
+    <h2><span style="color:#a080f0">◉</span> Statistics Resources</h2>
+    <div class="res-grid">
+      <div class="res-card">
+        <div class="rc-top"><h4>StatQuest (YouTube)</h4><span class="free-tag">Free</span></div>
+        <p>Josh Starmer's channel is the best stats resource for analysts. Covers p-values, regression, A/B testing with crystal clear visuals.</p>
+        <a class="res-link" href="https://www.youtube.com/@statquest" target="_blank">→ youtube.com/@statquest</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>Khan Academy Statistics</h4><span class="free-tag">Free</span></div>
+        <p>Complete stats curriculum from distributions to hypothesis testing. Great for filling gaps without needing textbooks.</p>
+        <a class="res-link" href="https://www.khanacademy.org/math/statistics-probability" target="_blank">→ khanacademy.org — Statistics</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>Evan Miller's A/B Testing Guide</h4><span class="free-tag">Free</span></div>
+        <p>The clearest explanation of A/B test math on the internet. Covers sample size, power, p-values, and sequential testing.</p>
+        <a class="res-link" href="https://www.evanmiller.org/how-not-to-run-an-ab-test.html" target="_blank">→ evanmiller.org — A/B testing</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>Seeing Theory (Brown Univ.)</h4><span class="free-tag">Free</span></div>
+        <p>Beautiful interactive visual intro to probability and statistics. Makes distributions, CLT, and inference intuitive.</p>
+        <a class="res-link" href="https://seeing-theory.brown.edu" target="_blank">→ seeing-theory.brown.edu</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="res-section">
+    <h2><span style="color:#f0b040">◉</span> BI & Visualization Resources</h2>
+    <div class="res-grid">
+      <div class="res-card">
+        <div class="rc-top"><h4>Tableau Public</h4><span class="free-tag">Free</span></div>
+        <p>Free Tableau desktop and public publishing. Build and share dashboards. Browse the gallery for real design inspiration.</p>
+        <a class="res-link" href="https://public.tableau.com" target="_blank">→ public.tableau.com</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>Power BI Desktop</h4><span class="free-tag">Free</span></div>
+        <p>Microsoft Power BI desktop is fully free. Import CSV files and build dashboards with DAX measures for interview practice.</p>
+        <a class="res-link" href="https://powerbi.microsoft.com/desktop" target="_blank">→ powerbi.microsoft.com/desktop</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>Storytelling with Data blog</h4><span class="free-tag">Free</span></div>
+        <p>Cole Nussbaumer Knaflic's blog on data visualization best practices. Essential for learning chart choice, decluttering, and annotation.</p>
+        <a class="res-link" href="https://www.storytellingwithdata.com/blog" target="_blank">→ storytellingwithdata.com/blog</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>Guy in a Cube (YouTube)</h4><span class="free-tag">Free</span></div>
+        <p>Best Power BI YouTube channel. Covers DAX, report design, Power Query, and real-world business scenarios clearly.</p>
+        <a class="res-link" href="https://www.youtube.com/@GuyInACube" target="_blank">→ youtube.com/@GuyInACube</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>Datawrapper Academy</h4><span class="free-tag">Free</span></div>
+        <p>Chart type selector and editorial data visualization guide. Helps you pick the right chart for the message, not just the data.</p>
+        <a class="res-link" href="https://academy.datawrapper.de" target="_blank">→ academy.datawrapper.de</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>The Data Visualisation Catalogue</h4><span class="free-tag">Free</span></div>
+        <p>Reference library of every chart type with descriptions, use cases, and examples. Great when choosing the right visual.</p>
+        <a class="res-link" href="https://datavizcatalogue.com" target="_blank">→ datavizcatalogue.com</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="res-section">
+    <h2><span style="color:#f080b0">◉</span> Case Study & Business Analytics Resources</h2>
+    <div class="res-grid">
+      <div class="res-card">
+        <div class="rc-top"><h4>Exponent — DA Interview Prep</h4><span class="free-tag">Free tier</span></div>
+        <p>Structured product and analytics case interview guides with example walkthroughs, frameworks, and mock interview videos.</p>
+        <a class="res-link" href="https://www.tryexponent.com/courses/data-analyst" target="_blank">→ tryexponent.com — Data Analyst</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>Glassdoor Interview Questions</h4><span class="free-tag">Free</span></div>
+        <p>Real interview questions from candidates at specific companies. Search your target company + "data analyst interview" for actual questions asked.</p>
+        <a class="res-link" href="https://www.glassdoor.com/Interview/data-analyst-interview-questions-SRCH_KO0,12.htm" target="_blank">→ glassdoor.com — DA interviews</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>Interview Query</h4><span class="free-tag">Free tier</span></div>
+        <p>Company-specific data analyst interview questions with detailed solutions. Covers SQL, Python, stats, and behavioral rounds.</p>
+        <a class="res-link" href="https://www.interviewquery.com" target="_blank">→ interviewquery.com</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>Lean Analytics (summary)</h4><span class="free-tag">Free summary</span></div>
+        <p>Framework for picking the right metric for each business stage. The OMTM (One Metric That Matters) concept is key for metric design questions.</p>
+        <a class="res-link" href="https://leananalyticsbook.com" target="_blank">→ leananalyticsbook.com</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="res-section">
+    <h2><span style="color:#f09060">◉</span> Behavioral & General Interview Resources</h2>
+    <div class="res-grid">
+      <div class="res-card">
+        <div class="rc-top"><h4>Big Interview</h4><span class="paid-tag">Paid</span></div>
+        <p>Video-based mock interviews with STAR method coaching. Includes DA-specific behavioral question bank with model answers.</p>
+        <a class="res-link" href="https://biginterview.com" target="_blank">→ biginterview.com</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>STAR Method Guide — The Muse</h4><span class="free-tag">Free</span></div>
+        <p>Clear STAR framework guide with 10 example questions and annotated model answers. Best quick-reference before interviews.</p>
+        <a class="res-link" href="https://www.themuse.com/advice/star-interview-method" target="_blank">→ themuse.com — STAR method</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>LinkedIn Interview Prep</h4><span class="free-tag">Free</span></div>
+        <p>AI-powered practice for behavioral questions. Record and replay your answers. Built into LinkedIn Premium (free trial available).</p>
+        <a class="res-link" href="https://www.linkedin.com/interview-prep/assessments" target="_blank">→ linkedin.com/interview-prep</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>Levels.fyi salary data</h4><span class="free-tag">Free</span></div>
+        <p>Real self-reported compensation data for DA/DS roles by company and location. Useful for knowing your worth before negotiating.</p>
+        <a class="res-link" href="https://www.levels.fyi/?compare=Data+Analyst" target="_blank">→ levels.fyi — Data Analyst</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="res-section">
+    <h2>🗂 Practice Datasets</h2>
+    <div class="res-grid">
+      <div class="res-card">
+        <div class="rc-top"><h4>Kaggle Datasets</h4><span class="free-tag">Free</span></div>
+        <p>Thousands of real datasets. Best starter datasets: House Prices, Titanic, Superstore Sales, NYC Taxi, COVID-19, and Customer Churn.</p>
+        <a class="res-link" href="https://www.kaggle.com/datasets" target="_blank">→ kaggle.com/datasets</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>Google Dataset Search</h4><span class="free-tag">Free</span></div>
+        <p>Search engine specifically for datasets. Great for finding domain-specific data (healthcare, retail, finance) for targeted practice.</p>
+        <a class="res-link" href="https://datasetsearch.research.google.com" target="_blank">→ datasetsearch.research.google.com</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>Maven Analytics Data Playground</h4><span class="free-tag">Free</span></div>
+        <p>Curated, clean datasets designed for BI and analytics practice. Comes with challenge prompts — great for portfolio projects.</p>
+        <a class="res-link" href="https://mavenanalytics.io/data-playground" target="_blank">→ mavenanalytics.io/data-playground</a>
+      </div>
+      <div class="res-card">
+        <div class="rc-top"><h4>data.world</h4><span class="free-tag">Free tier</span></div>
+        <p>Collaborative data platform with hundreds of public datasets. Includes SQL query capability directly in the browser.</p>
+        <a class="res-link" href="https://data.world" target="_blank">→ data.world</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FAQ TAB ===== -->
+<div class="tab-panel" id="tab-faq">
+  <div class="page-header">
+    <h1>Most Frequently Asked Questions</h1>
+    <p>Curated from real interviews at top companies — SQL, Python, Stats, and Behavioral rounds</p>
+  </div>
+
+  <div class="faq-section">
+    <h2><span style="color:#5a90f0">▸</span> SQL Interview Questions</h2>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What is the difference between WHERE and HAVING? <span class="arrow">›</span></div>
+      <div class="faq-a"><strong>WHERE</strong> filters rows before aggregation. <strong>HAVING</strong> filters after aggregation (used with GROUP BY).<br><br><pre>-- WHERE: filters raw rows
+SELECT dept, COUNT(*) FROM employees
+WHERE salary > 50000
+GROUP BY dept;
+
+-- HAVING: filters aggregated result
+SELECT dept, COUNT(*) FROM employees
+GROUP BY dept
+HAVING COUNT(*) > 10;</pre>
+<strong>Interview tip:</strong> If a question says "filter groups where total sales > X", that's HAVING, not WHERE.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What is the difference between RANK(), DENSE_RANK(), and ROW_NUMBER()? <span class="arrow">›</span></div>
+      <div class="faq-a">
+        <ul>
+          <li><code>ROW_NUMBER()</code> — assigns a unique sequential number. No ties. 1, 2, 3, 4...</li>
+          <li><code>RANK()</code> — ties get the same rank, then the next rank skips. 1, 1, 3, 4...</li>
+          <li><code>DENSE_RANK()</code> — ties get the same rank, no skipping. 1, 1, 2, 3...</li>
+        </ul><br>
+<pre>SELECT name, salary,
+  ROW_NUMBER() OVER (ORDER BY salary DESC) AS rn,
+  RANK()       OVER (ORDER BY salary DESC) AS rnk,
+  DENSE_RANK() OVER (ORDER BY salary DESC) AS drk
+FROM employees;</pre>
+<strong>When to use each:</strong> ROW_NUMBER for pagination / deduplication. RANK/DENSE_RANK for leaderboards where ties should be acknowledged.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Write a query to find the second highest salary. <span class="arrow">›</span></div>
+      <div class="faq-a">Multiple valid approaches:<pre>-- Method 1: Subquery (most common answer)
+SELECT MAX(salary) FROM employees
+WHERE salary < (SELECT MAX(salary) FROM employees);
+
+-- Method 2: DENSE_RANK (handles ties correctly)
+SELECT salary FROM (
+  SELECT salary, DENSE_RANK() OVER (ORDER BY salary DESC) AS rnk
+  FROM employees
+) t WHERE rnk = 2;
+
+-- Method 3: LIMIT/OFFSET (simple, risky with ties)
+SELECT DISTINCT salary FROM employees
+ORDER BY salary DESC LIMIT 1 OFFSET 1;</pre>
+<strong>Best answer in interview:</strong> Use DENSE_RANK and mention it handles ties, which the other methods don't.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What is a CTE and when would you use it over a subquery? <span class="arrow">›</span></div>
+      <div class="faq-a"><strong>CTE (Common Table Expression)</strong> is a named temporary result set defined with <code>WITH</code>. It exists only for the duration of the query.<br><br>
+<strong>Use CTEs when:</strong>
+<ul>
+<li>You need to reuse the same logic more than once in the query</li>
+<li>Your subquery logic is complex enough to need a clear name</li>
+<li>You're building a multi-step transformation (step 1 → step 2 → step 3)</li>
+<li>Readability matters more than micro-performance</li>
+</ul>
+<br><strong>Subqueries</strong> are fine for simple one-off filters. CTEs are better for anything more complex because they're readable and maintainable.<br>
+<strong>Recursive CTEs</strong> can traverse hierarchical data (e.g., org charts) — a bonus point to mention if relevant.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">How would you calculate a 7-day rolling average in SQL? <span class="arrow">›</span></div>
+      <div class="faq-a"><pre>SELECT
+  date,
+  revenue,
+  AVG(revenue) OVER (
+    ORDER BY date
+    ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
+  ) AS rolling_7day_avg
+FROM daily_revenue
+ORDER BY date;</pre>
+<strong>Key concept:</strong> <code>ROWS BETWEEN 6 PRECEDING AND CURRENT ROW</code> defines the window frame as the current row plus 6 prior rows = 7 days total. Use <code>RANGE BETWEEN</code> instead of <code>ROWS BETWEEN</code> if you need calendar-based intervals instead of row-based.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What is the difference between UNION and UNION ALL? <span class="arrow">›</span></div>
+      <div class="faq-a"><strong>UNION</strong> combines results from two queries and removes duplicates (adds a DISTINCT step — slower).<br><br><strong>UNION ALL</strong> combines results and keeps all duplicates (faster — no dedup step).<br><br><strong>Interview answer:</strong> Always use UNION ALL unless you specifically need deduplication, because it's faster. If the two result sets are already unique by design, UNION is just unnecessary overhead.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">You have a table of user events. Write a query to find users who logged in on two consecutive days. <span class="arrow">›</span></div>
+      <div class="faq-a"><pre>SELECT DISTINCT a.user_id
+FROM logins a
+JOIN logins b
+  ON a.user_id = b.user_id
+  AND DATEDIFF(b.login_date, a.login_date) = 1;</pre>
+<strong>Alternative using LAG():</strong><pre>SELECT DISTINCT user_id FROM (
+  SELECT user_id, login_date,
+    LAG(login_date) OVER (PARTITION BY user_id ORDER BY login_date) AS prev_date
+  FROM logins
+) t
+WHERE DATEDIFF(login_date, prev_date) = 1;</pre>
+<strong>Mention both approaches</strong> — the JOIN is classic, the LAG approach shows window function fluency.</div>
+    </div>
+  </div>
+
+  <div class="faq-section">
+    <h2><span style="color:#60cf80">▸</span> Python / pandas Questions</h2>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">How do you handle missing values in pandas? Walk me through your approach. <span class="arrow">›</span></div>
+      <div class="faq-a"><strong>Step 1: Understand the extent</strong><pre>df.isnull().sum()           # count nulls per column
+df.isnull().mean() * 100    # % nulls per column</pre>
+<strong>Step 2: Decide strategy based on type and business context</strong>
+<ul>
+<li><strong>Drop rows:</strong> <code>df.dropna(subset=['col'])</code> — when < 5% missing and random</li>
+<li><strong>Fill with constant:</strong> <code>df['col'].fillna(0)</code> — for counts, flags</li>
+<li><strong>Fill with mean/median:</strong> <code>df['col'].fillna(df['col'].median())</code> — for numeric, use median if skewed</li>
+<li><strong>Forward/backward fill:</strong> <code>df['col'].ffill()</code> — for time series</li>
+<li><strong>Impute with model:</strong> sklearn KNNImputer — for complex multivariate patterns</li>
+</ul>
+<strong>Interview tip:</strong> Always explain WHY you chose a method, not just what you ran.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What is the difference between loc and iloc in pandas? <span class="arrow">›</span></div>
+      <div class="faq-a">
+        <ul>
+          <li><code>loc</code> — label-based: select by index label or column name. <code>df.loc[0, 'name']</code></li>
+          <li><code>iloc</code> — position-based: select by integer position. <code>df.iloc[0, 2]</code></li>
+        </ul><br>
+<pre>df.loc[df['city'] == 'Tampa']       # filter by label condition
+df.iloc[0:5, 1:3]                   # first 5 rows, cols 1 and 2</pre>
+<strong>Common gotcha:</strong> When the index is the default integer range, <code>loc[0]</code> and <code>iloc[0]</code> return the same row — but after sorting or filtering, the index labels may no longer match positions.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">How do you merge two DataFrames? What are the different join types? <span class="arrow">›</span></div>
+      <div class="faq-a"><pre>pd.merge(df1, df2, on='user_id', how='inner')   # INNER JOIN
+pd.merge(df1, df2, on='user_id', how='left')    # LEFT JOIN
+pd.merge(df1, df2, on='user_id', how='outer')   # FULL OUTER JOIN
+pd.merge(df1, df2, on='user_id', how='right')   # RIGHT JOIN
+
+# Different column names in each table:
+pd.merge(df1, df2, left_on='id', right_on='user_id', how='left')</pre>
+<strong>concat vs merge:</strong> Use <code>pd.concat</code> to stack DataFrames vertically (UNION). Use <code>pd.merge</code> for horizontal joins (JOIN).</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">How would you find duplicate rows in a DataFrame and remove them? <span class="arrow">›</span></div>
+      <div class="faq-a"><pre>df.duplicated().sum()                      # count total duplicates
+df[df.duplicated()]                        # view duplicate rows
+df[df.duplicated(subset=['email'])]        # duplicates on specific column
+
+df.drop_duplicates()                       # remove duplicates, keep first
+df.drop_duplicates(subset=['email'], keep='last')  # keep last occurrence</pre>
+<strong>Interview tip:</strong> Ask what defines a "duplicate" in business context — is it a full-row match, or just a duplicate on a key like email or user_id? The answer changes your strategy.</div>
+    </div>
+  </div>
+
+  <div class="faq-section">
+    <h2><span style="color:#a080f0">▸</span> Statistics & A/B Testing Questions</h2>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What is a p-value? Explain it to a non-technical stakeholder. <span class="arrow">›</span></div>
+      <div class="faq-a"><strong>Technical definition:</strong> The p-value is the probability of observing results at least as extreme as what we got, assuming the null hypothesis is true.<br><br>
+<strong>Plain English for a stakeholder:</strong> "If we assume our new button has zero effect, the p-value tells us how likely we'd see a difference this large just by random chance. A p-value of 0.03 means there's only a 3% chance the results are due to random noise."<br><br>
+<strong>Common misconceptions to avoid saying:</strong>
+<ul>
+<li>❌ "p=0.03 means there's a 97% chance the treatment works"</li>
+<li>❌ "p=0.03 means the effect is large or practically meaningful"</li>
+<li>✅ "p=0.03 means statistical significance at 0.05 threshold, but we also need to assess practical significance"</li>
+</ul></div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">How do you design an A/B test end to end? <span class="arrow">›</span></div>
+      <div class="faq-a"><strong>Step 1 — Define hypothesis:</strong> What change are we making? What is the expected direction of effect?<br><br>
+<strong>Step 2 — Define success metric:</strong> Primary metric (e.g., checkout conversion rate) + guardrail metrics (e.g., revenue per user).<br><br>
+<strong>Step 3 — Calculate sample size:</strong> Use a power calculator (80% power, α = 0.05). Determine minimum detectable effect (MDE) based on business significance.<br><br>
+<strong>Step 4 — Run the test:</strong> Random assignment, equal groups, no peeking. Run for at least one full business cycle (usually 1–2 weeks).<br><br>
+<strong>Step 5 — Analyze results:</strong> Run t-test or chi-square. Check p-value and confidence interval. Segment results by device, cohort, and geography.<br><br>
+<strong>Step 6 — Make a decision:</strong> Statistical significance + practical significance + business context = recommendation.<br><br>
+<strong>Key gotchas to mention:</strong> novelty effect, network effects, Simpson's paradox in segments, running tests too short.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What is the difference between Type I and Type II errors? <span class="arrow">›</span></div>
+      <div class="faq-a">
+        <ul>
+          <li><strong>Type I error (False Positive):</strong> We reject the null hypothesis when it's actually true. We conclude a treatment works when it doesn't. Controlled by α (significance level). α = 0.05 means 5% chance of Type I error.</li>
+          <li><strong>Type II error (False Negative):</strong> We fail to reject the null when it's actually false. We miss a real effect. Controlled by β. Power = 1 - β. Typical target: 80% power (β = 0.20).</li>
+        </ul><br>
+<strong>Business framing:</strong> "A Type I error means we ship a feature that doesn't actually help — wasted engineering effort. A Type II error means we discard a feature that would have helped — missed opportunity. The trade-off between these drives your choice of α and sample size."</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What is the Central Limit Theorem and why does it matter for analysis? <span class="arrow">›</span></div>
+      <div class="faq-a"><strong>The CLT states:</strong> If you take sufficiently large random samples from any population (regardless of its distribution), the distribution of sample means will be approximately normal.<br><br>
+<strong>Why it matters for analysts:</strong>
+<ul>
+<li>It's why t-tests and z-tests work even when the underlying data isn't normally distributed</li>
+<li>It justifies using parametric statistical tests on real-world skewed business data</li>
+<li>"Sufficiently large" is typically n ≥ 30</li>
+</ul><br>
+<strong>Interview answer tip:</strong> Connect it to A/B testing — "This is why we can use a t-test to compare conversion rates even though individual user behavior is binary (convert or not), as long as our sample size is large enough."</div>
+    </div>
+  </div>
+
+  <div class="faq-section">
+    <h2><span style="color:#f080b0">▸</span> Product & Business Analytics Questions</h2>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Our DAU dropped 25% overnight. How do you investigate? <span class="arrow">›</span></div>
+      <div class="faq-a"><strong>This is the most common product analytics question. Use a structured funnel:</strong><br><br>
+<strong>Step 1 — Validate the data:</strong> Is the metric drop real or a data pipeline issue? Check logging, ETL jobs, and data freshness.<br><br>
+<strong>Step 2 — Narrow the scope by time:</strong> When exactly did it start? Sudden drop = likely technical issue. Gradual = behavioral change.<br><br>
+<strong>Step 3 — Segment by dimensions:</strong>
+<ul>
+<li>Geography — one region or global?</li>
+<li>Platform — iOS, Android, web?</li>
+<li>User cohort — new vs existing users?</li>
+<li>Feature area — which screens/actions dropped?</li>
+</ul>
+<strong>Step 4 — Check for external causes:</strong> App store update, server outage, competitor launch, marketing campaign end, holiday.<br><br>
+<strong>Step 5 — Formulate a hypothesis and test:</strong> State the most likely cause and what data would confirm or rule it out.<br><br>
+<strong>Step 6 — Recommend action:</strong> Fix + monitor plan, not just the diagnosis.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">How would you define the key metrics for a new product feature? <span class="arrow">›</span></div>
+      <div class="faq-a"><strong>Framework: use a 3-layer metric structure</strong><br><br>
+<strong>1. Primary (success) metric:</strong> The one metric this feature is designed to move. Should be measurable, time-bound, and tied to user behavior.<br><br>
+<strong>2. Secondary (supporting) metrics:</strong> 2-3 metrics that confirm the primary is moving for the right reasons (not just through noise).<br><br>
+<strong>3. Guardrail metrics:</strong> Metrics that should NOT be harmed. Revenue, retention, NPS, latency.<br><br>
+<strong>Example — a new onboarding flow:</strong>
+<ul>
+<li>Primary: Day 7 retention rate</li>
+<li>Secondary: Onboarding completion rate, time-to-first-value</li>
+<li>Guardrail: Support ticket volume, overall conversion rate</li>
+</ul>
+<strong>Mention:</strong> Avoid vanity metrics (pageviews, impressions) and pick metrics you can actually act on.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What is the difference between a north star metric and a KPI? <span class="arrow">›</span></div>
+      <div class="faq-a"><strong>North Star Metric (NSM):</strong> A single metric that best captures the core value delivered to users. It should correlate with long-term revenue and guide the whole company's direction.<br>Examples: Airbnb → nights booked. Spotify → time spent listening. LinkedIn → monthly active users.<br><br>
+<strong>KPI (Key Performance Indicator):</strong> A set of operational metrics tracked to measure progress toward specific goals. Multiple KPIs exist at team and feature level, and they ladder up toward the NSM.<br><br>
+<strong>The relationship:</strong> KPIs are the levers. The NSM is the flywheel outcome. A team's KPI might be "checkout completion rate" while the company NSM is "gross merchandise value."<br><br>
+<strong>Interview tip:</strong> Knowing this distinction signals product thinking, not just technical skill. It will impress interviewers at growth-stage or product-led companies.</div>
+    </div>
+  </div>
+
+  <div class="faq-section">
+    <h2><span style="color:#f09060">▸</span> Behavioral Questions</h2>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Tell me about a time you found a significant insight from data. <span class="arrow">›</span></div>
+      <div class="faq-a"><strong>STAR structure:</strong><br><br>
+<strong>Situation:</strong> Set the business context — what problem or question existed?<br><br>
+<strong>Task:</strong> What were you asked to do (or what did you proactively investigate)?<br><br>
+<strong>Action:</strong> What data did you pull? What SQL / Python / tool did you use? How did you validate the insight?<br><br>
+<strong>Result:</strong> What was the impact? <em>Always quantify.</em> "This led to a 15% reduction in X" or "saved 40 analyst hours per month" or "the team prioritized feature Y as a result."<br><br>
+<strong>Tips:</strong>
+<ul>
+<li>Pick a story where YOUR analysis drove a decision — not just where you ran a report</li>
+<li>Mention one thing that was unexpected or counterintuitive in the data</li>
+<li>Show you can translate numbers into business language</li>
+</ul></div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Tell me about a time you had to explain a complex analysis to a non-technical audience. <span class="arrow">›</span></div>
+      <div class="faq-a"><strong>What they're really asking:</strong> Can you translate data into clear business language? Can you manage up and build stakeholder trust?<br><br>
+<strong>What a strong answer shows:</strong>
+<ul>
+<li>You understood what the audience cared about (the decision, not the math)</li>
+<li>You removed jargon and focused on the "so what"</li>
+<li>You used a visual, analogy, or concrete example rather than raw numbers</li>
+<li>The audience understood and trusted the analysis enough to act on it</li>
+</ul>
+<strong>Avoid:</strong> "I simplified it for them" — sounds condescending. Say instead: "I reframed the analysis around the business question they were trying to answer."</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">How do you handle a situation where two data sources give conflicting numbers? <span class="arrow">›</span></div>
+      <div class="faq-a"><strong>This is a very common DA interview question. Strong structure:</strong><br><br>
+<strong>1. Validate both sources:</strong> Check data freshness, granularity, and definition. Are both measuring the same thing with the same filters?<br><br>
+<strong>2. Trace the discrepancy:</strong> Profile both datasets. Find the overlap and the gap. Is the difference a join issue? A timezone difference? Different NULL handling?<br><br>
+<strong>3. Surface it — don't hide it:</strong> Tell stakeholders immediately. "I found a discrepancy of X% between source A and source B, and I'm investigating the root cause."<br><br>
+<strong>4. Establish a single source of truth:</strong> Work with data engineering to agree on the canonical source for each metric going forward. Document it.<br><br>
+<strong>Key message:</strong> Show that you prioritize data integrity over convenience, and that you communicate proactively rather than picking the number that looks better.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Where do you see yourself in 3–5 years? (For a DA role) <span class="arrow">›</span></div>
+      <div class="faq-a"><strong>What they're really evaluating:</strong> Are you motivated? Will you grow with the company? Are you a flight risk?<br><br>
+<strong>Strong answer framework:</strong>
+<ul>
+<li>Short-term (1 year): Master the tools, domain, and data stack at this company. Build relationships with key stakeholders.</li>
+<li>Mid-term (2–3 years): Lead analysis for a major product area or business function. Begin mentoring junior analysts.</li>
+<li>Long-term (3–5 years): Senior analyst or lead role — either staying deep in analytics or moving toward analytics engineering or data science, depending on the company's structure and your growth.</li>
+</ul>
+<strong>Tailor to the role:</strong> If the company values technical depth, emphasize analytics engineering / ML. If it's a business-oriented role, emphasize strategic influence and stakeholder management.</div>
+    </div>
+  </div>
+
+  <div class="faq-section">
+    <h2>🧠 Common Trick Questions & Gotchas</h2>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What is Simpson's Paradox and when does it matter in analysis? <span class="arrow">›</span></div>
+      <div class="faq-a"><strong>Simpson's Paradox</strong> is when a trend that appears in several groups of data reverses or disappears when the groups are combined.<br><br>
+<strong>Classic example:</strong> Treatment A has a higher overall success rate than Treatment B. But when you split by severity (mild/severe cases), Treatment B beats Treatment A in both groups. The paradox is caused by a confounding variable (case severity) being unevenly distributed.<br><br>
+<strong>Why it matters in practice:</strong>
+<ul>
+<li>A/B test results can reverse when you control for user segments</li>
+<li>Aggregate metrics can hide problems in specific cohorts</li>
+<li>Always segment results before presenting aggregated conclusions</li>
+</ul>
+<strong>Mentioning this in an interview scores major points</strong> — it shows you think about confounders, not just correlations.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Correlation vs causation — give a real business example. <span class="arrow">›</span></div>
+      <div class="faq-a"><strong>Correlation:</strong> Two variables move together. Ice cream sales and drowning rates both increase in summer — correlated, not causal.<br><br>
+<strong>Causation:</strong> One variable directly causes a change in the other. Requiring seatbelts causes fewer traffic fatalities.<br><br>
+<strong>Business example:</strong> "We noticed users who use our mobile app more than 3x per week have 60% higher lifetime value. But we can't conclude that pushing notifications to increase session frequency will raise LTV — high-frequency users may simply be the segment that was already highly engaged."<br><br>
+<strong>How to test for causation in business:</strong> Randomized A/B test (gold standard), quasi-experimental design (diff-in-diff, regression discontinuity), or instrumental variable analysis.<br><br>
+<strong>Always ask:</strong> Is there a confounding variable? Could there be reverse causation?</div>
+    </div>
+  </div>
+</div>
+<!-- END FAQ -->
+
+</div>
+</main>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal-bg">
+  <div class="modal" id="modal">
+    <button class="close-btn" id="modal-close" aria-label="Close">×</button>
+    <h2 id="m-title"></h2>
+    <div class="msub" id="m-sub"></div>
+    <div class="modal-section"><h4>What to study</h4><ul id="m-topics"></ul></div>
+    <div class="modal-section"><h4>Practice tasks</h4><ul id="m-tasks"></ul></div>
+    <div class="modal-section"><h4>Resources for this day</h4><div class="modal-links" id="m-links"></div></div>
+  </div>
+</div>
+
+<script>
+const DAYS = [
+  {d:1,c:"s",wk:1,tl:"SQL foundations",fx:"SELECT, WHERE, GROUP BY, HAVING, aggregations",tm:"45 min",tags:["SELECT/WHERE","GROUP BY","Aggregations","NULL handling"],
+   tp:["Write SELECT queries with single and multi-condition WHERE filters","Use GROUP BY + HAVING to filter after aggregation","Practice ORDER BY, LIMIT, DISTINCT","Master COUNT, SUM, AVG, MAX, MIN — know when to use each","Handle NULLs: IS NULL, COALESCE, NULLIF"],
+   tk:["Write 5 queries against a sample sales or orders table","Solve 3 Easy SQL problems on LeetCode","Practice date-range filtering with BETWEEN and date functions"],
+   links:[{n:"LeetCode SQL 50",u:"https://leetcode.com/studyplan/top-sql-50/",f:true},{n:"SQLZoo",u:"https://sqlzoo.net",f:true},{n:"Mode Analytics SQL Tutorial",u:"https://mode.com/sql-tutorial",f:true}]},
+
+  {d:2,c:"s",wk:1,tl:"SQL joins",fx:"INNER, LEFT, RIGHT, FULL OUTER, self-joins",tm:"45 min",tags:["INNER JOIN","LEFT JOIN","FULL OUTER","Self-join"],
+   tp:["Master INNER vs LEFT vs RIGHT with Venn diagram intuition","Understand FULL OUTER JOIN and UNION vs UNION ALL","Practice self-joins for hierarchical or sequential data","Write multi-table joins with aliases","Understand indexed vs non-indexed join performance"],
+   tk:["Solve 4 join-based SQL problems on StrataScratch","Draw the Venn diagram for all join types from memory","Replicate a business reporting query with 3 joined tables"],
+   links:[{n:"StrataScratch JOIN problems",u:"https://platform.stratascratch.com",f:true},{n:"SQLZoo JOIN section",u:"https://sqlzoo.net/wiki/The_JOIN_operation",f:true},{n:"DataLemur JOIN questions",u:"https://datalemur.com",f:true}]},
+
+  {d:3,c:"s",wk:1,tl:"Advanced SQL",fx:"Window functions, CTEs, subqueries",tm:"60 min",tags:["Window functions","CTEs","Subqueries","RANK"],
+   tp:["ROW_NUMBER, RANK, DENSE_RANK, NTILE — differences and use cases","LAG and LEAD for time-series within partitions","PARTITION BY vs GROUP BY — key interview distinction","WITH clause CTEs for readable multi-step queries","Correlated vs non-correlated subqueries"],
+   tk:["Build a running total using SUM() OVER (ORDER BY date)","Write a CTE to find top 3 products per region","Solve 2 Medium LeetCode SQL problems with window functions"],
+   links:[{n:"Mode SQL Window Functions",u:"https://mode.com/sql-tutorial/sql-window-functions",f:true},{n:"LeetCode Medium SQL",u:"https://leetcode.com/problemset/database/?difficulty=MEDIUM",f:true},{n:"DataLemur Window Function Qs",u:"https://datalemur.com",f:true}]},
+
+  {d:4,c:"st",wk:1,tl:"Statistics basics",fx:"Descriptive stats, distributions, probability",tm:"45 min",tags:["Mean/Median","Normal distribution","Probability","Outliers"],
+   tp:["Mean, median, mode, variance, standard deviation","Normal distribution and the 68-95-99.7 empirical rule","When to use median over mean (skewed data, outliers)","Conditional probability and Bayes' theorem conceptually","Outlier detection: IQR method and z-score thresholds"],
+   tk:["Calculate descriptive stats using pandas describe()","Write out: when would median be better than mean in a business context?","Sketch a normal distribution curve labeling the std dev zones"],
+   links:[{n:"Khan Academy Statistics",u:"https://www.khanacademy.org/math/statistics-probability",f:true},{n:"StatQuest YouTube",u:"https://www.youtube.com/@statquest",f:true},{n:"Seeing Theory (Visual Stats)",u:"https://seeing-theory.brown.edu",f:true}]},
+
+  {d:5,c:"st",wk:1,tl:"Hypothesis testing & A/B",fx:"p-values, confidence intervals, A/B test design",tm:"60 min",tags:["A/B testing","p-value","Confidence interval","Type I & II"],
+   tp:["Set up null and alternative hypotheses","Type I error (false positive) and Type II error (false negative)","Interpret p-values in plain business language","Confidence intervals — what width means","When to use t-test vs chi-square vs Mann-Whitney U"],
+   tk:["Walk through a complete A/B test result: state hypotheses, interpret, recommend","Write null hypotheses for 3 realistic business scenarios","Explain the difference between statistical and practical significance"],
+   links:[{n:"Evan Miller A/B Testing Guide",u:"https://www.evanmiller.org/how-not-to-run-an-ab-test.html",f:true},{n:"StatQuest p-values video",u:"https://www.youtube.com/watch?v=vemZtEM63GY",f:true},{n:"A/B test sample size calculator",u:"https://www.evanmiller.org/ab-testing/sample-size.html",f:true}]},
+
+  {d:6,c:"p",wk:2,tl:"Python — pandas",fx:"DataFrames, data cleaning, transformations",tm:"45 min",tags:["pandas","Data cleaning","groupby","merge"],
+   tp:["Load and inspect: read_csv, head, info, describe, shape","Handle missing values: fillna, dropna, isnull, interpolate","Aggregate with groupby + agg","Combine DataFrames: merge (JOIN) and concat (UNION)","Custom transforms with apply, map, lambda"],
+   tk:["Download a messy CSV from Kaggle and clean it: nulls, duplicates, dtypes","Reproduce a SQL GROUP BY + HAVING entirely in pandas","Find top 5 customers by total revenue using chained operations"],
+   links:[{n:"Kaggle Learn — pandas",u:"https://www.kaggle.com/learn/pandas",f:true},{n:"Real Python — pandas tutorial",u:"https://realpython.com/pandas-dataframe",f:true},{n:"Google Colab (free notebook)",u:"https://colab.research.google.com",f:true}]},
+
+  {d:7,c:"p",wk:2,tl:"Python EDA + visualization",fx:"Exploratory analysis with matplotlib & seaborn",tm:"45 min",tags:["EDA","matplotlib","seaborn","Correlation"],
+   tp:["Univariate analysis: histograms, boxplots, value_counts","Bivariate: scatter plots, crosstabs, correlation matrix","seaborn heatmap and pairplot","Identify skewed distributions and transformation options","Translate chart findings into plain-language business insights"],
+   tk:["Run a full EDA on any Kaggle dataset, document every insight","Create a correlation heatmap and write 3 clear findings","Write a 5-sentence executive summary of your EDA"],
+   links:[{n:"seaborn examples gallery",u:"https://seaborn.pydata.org/examples/index.html",f:true},{n:"Kaggle datasets",u:"https://www.kaggle.com/datasets",f:true},{n:"Plotly Express (interactive charts)",u:"https://plotly.com/python/plotly-express",f:true}]},
+
+  {d:8,c:"bi",wk:2,tl:"BI tools — Power BI / Tableau",fx:"Dashboards, DAX, chart selection principles",tm:"45 min",tags:["Power BI","DAX","Tableau","Dashboard design"],
+   tp:["Bar vs line vs pie — and when NOT to use pie","DAX: CALCULATE, SUMX, DIVIDE, time intelligence","Tableau calculated fields, filters, LOD expressions","Dashboard design: declutter, hierarchy, single message","Choosing the right visual for the audience"],
+   tk:["Build a 3-KPI dashboard in Power BI Desktop or Tableau Public","Write a DAX measure for Year-over-Year growth %","Find a bad dashboard online and list 3 specific improvements"],
+   links:[{n:"Power BI Desktop (free download)",u:"https://powerbi.microsoft.com/desktop",f:true},{n:"Tableau Public (free)",u:"https://public.tableau.com",f:true},{n:"Guy in a Cube YouTube",u:"https://www.youtube.com/@GuyInACube",f:true},{n:"Storytelling with Data blog",u:"https://www.storytellingwithdata.com/blog",f:true}]},
+
+  {d:9,c:"s",wk:2,tl:"SQL for analytics",fx:"Cohort analysis, funnel queries, retention",tm:"60 min",tags:["Cohort","Retention","Funnel","DATE_TRUNC"],
+   tp:["Cohort analysis using DATE_TRUNC and self-JOIN","Funnel drop-off with sequential CTEs","Day 1, Day 7, Day 30 retention rate calculation","Session analysis and time-between-events","Handling duplicate events in event tables"],
+   tk:["Write a monthly cohort retention query from scratch","Build a 3-step funnel query for a signup or checkout flow","Debug an intentionally broken retention query"],
+   links:[{n:"Mode Analytics Cohort Tutorial",u:"https://mode.com/sql-tutorial/sql-cohort-analysis",f:true},{n:"DB-Fiddle SQL sandbox",u:"https://www.db-fiddle.com",f:true},{n:"StrataScratch analytics patterns",u:"https://platform.stratascratch.com",f:true}]},
+
+  {d:10,c:"cs",wk:2,tl:"Product analytics case",fx:"Metrics definition, root cause analysis",tm:"60 min",tags:["AARRR","Metric design","Root cause","Frameworks"],
+   tp:["AARRR: Acquisition, Activation, Retention, Revenue, Referral","Defining and choosing the right north-star metric","Root cause: drill by time → geo → device → user cohort","Answer structure: Clarify → Metrics → Segment → Hypothesize → Test","Common formats: metric-drop, metric-design, trade-off questions"],
+   tk:["Answer: 'DAU dropped 20% overnight — walk me through your investigation'","Define 3 metrics for a food delivery app (input/output/guardrail)","Practice one full case walkthrough, time yourself to 10 minutes"],
+   links:[{n:"Exponent DA interview guide",u:"https://www.tryexponent.com/courses/data-analyst",f:false},{n:"Interview Query case prep",u:"https://www.interviewquery.com",f:false},{n:"Lean Analytics book site",u:"https://leananalyticsbook.com",f:true}]},
+
+  {d:11,c:"st",wk:3,tl:"Regression & modeling basics",fx:"Linear regression, correlation, model intuition",tm:"45 min",tags:["Regression","R²","Correlation","Overfitting"],
+   tp:["Simple vs multiple linear regression conceptually","R² and adjusted R² interpretation","Multicollinearity and how to detect it","Train/test split and overfitting intuition","Logistic regression basics for binary classification"],
+   tk:["Build a linear regression in Python using sklearn","Interpret R², coefficients, and p-values from model output","Explain regression assumptions to a non-technical stakeholder"],
+   links:[{n:"StatQuest — Regression playlist",u:"https://www.youtube.com/watch?v=nk2CQITm_eo",f:true},{n:"sklearn regression docs",u:"https://scikit-learn.org/stable/modules/linear_model.html",f:true},{n:"Kaggle Intro to ML course",u:"https://www.kaggle.com/learn/intro-to-machine-learning",f:true}]},
+
+  {d:12,c:"cs",wk:3,tl:"Business analytics case",fx:"Revenue analysis, forecasting, pricing",tm:"60 min",tags:["Revenue","Forecasting","Pricing","Executive summary"],
+   tp:["Revenue decomposition: Price × Volume × Mix","Moving average and exponential smoothing forecasting","Pricing analysis: elasticity and cannibalization","Building a business case narrative","One-page executive summary structure"],
+   tk:["Analyze a mock revenue dataset and find the biggest change driver","Build a 3-month moving average forecast extended 2 months","Write a 3-paragraph executive summary for a non-technical VP"],
+   links:[{n:"Maven Analytics data challenges",u:"https://mavenanalytics.io/data-playground",f:true},{n:"Kaggle business datasets",u:"https://www.kaggle.com/datasets?tags=13405-Business",f:true},{n:"DataCamp forecasting tutorial",u:"https://www.datacamp.com/tutorial/time-series-analysis-tutorial",f:true}]},
+
+  {d:13,c:"bi",wk:3,tl:"Storytelling with data",fx:"Data communication, presentation clarity",tm:"30 min",tags:["SCR structure","Insight slides","Annotation","Plain language"],
+   tp:["SCR narrative: Situation → Complication → Resolution","One insight per slide — the title IS the takeaway","Choose charts for the message, not to showcase data","Annotate: highlight the key data point, mute everything else","Translate analysis output into language a CEO acts on"],
+   tk:["Convert any of your charts into an insight slide with a headline title","Explain a complex trend to a non-technical person in 3 sentences","Find a bad chart online, list 3 problems, sketch a better version"],
+   links:[{n:"Storytelling with Data blog",u:"https://www.storytellingwithdata.com/blog",f:true},{n:"Datawrapper Academy",u:"https://academy.datawrapper.de",f:true},{n:"Data Viz Catalogue",u:"https://datavizcatalogue.com",f:true}]},
+
+  {d:14,c:"bh",wk:3,tl:"Behavioral round prep",fx:"STAR method, analyst-specific behavioral questions",tm:"45 min",tags:["STAR method","Impact","Conflict","Questions to ask"],
+   tp:["STAR structure with metrics in every Result","'Tell me about a data mistake you made' — model answer","'How do you handle conflicting data sources?' — structure","Quantify impact: %, time saved, revenue, decisions influenced","Prepare 5 smart questions for the interviewer panel"],
+   tk:["Write 3 STAR stories from your experience with quantified results","Record yourself answering one question for 2 minutes, review it","Prepare 5 questions that show analytical curiosity about the role"],
+   links:[{n:"STAR method guide — The Muse",u:"https://www.themuse.com/advice/star-interview-method",f:true},{n:"Glassdoor interview reviews",u:"https://www.glassdoor.com/Interview/data-analyst-interview-questions-SRCH_KO0,12.htm",f:true},{n:"LinkedIn Interview Prep",u:"https://www.linkedin.com/interview-prep/assessments",f:true}]},
+
+  {d:15,c:"cs",wk:3,tl:"Full mock interview day",fx:"End-to-end simulation across all rounds",tm:"60 min",tags:["Mock SQL","Full case","Behavioral","Weak spot review"],
+   tp:["Timed SQL coding: 2 Medium problems in 30 minutes, no hints","Full case walkthrough from scratch, no notes","Back-to-back behavioral: 3 STAR questions under pressure","Review your weakest topic from days 1–14","Finalize 'Tell me about yourself' as a 90-second story"],
+   tk:["Solve 2 Medium LeetCode SQL problems under 30-minute timer","Run a full 30-minute mock case with a peer or with Claude","Write your final interview-day checklist"],
+   links:[{n:"LeetCode Medium SQL problems",u:"https://leetcode.com/problemset/database/?difficulty=MEDIUM",f:true},{n:"Exponent mock interviews",u:"https://www.tryexponent.com",f:false},{n:"Glassdoor — company interview reviews",u:"https://www.glassdoor.com/Interview/index.htm",f:true}]}
+];
+
+const catName={s:'SQL',p:'Python',st:'Stats',bi:'BI & Viz',cs:'Case study',bh:'Behavioral'};
+const catCls={s:'c-sql',p:'c-py',st:'c-st',bi:'c-bi',cs:'c-cs',bh:'c-bh'};
+const trackMax={s:4,p:2,st:3,bi:2,cs:3,bh:1};
+
+let done=[];
+try{done=JSON.parse(localStorage.getItem('da15v2')||'[]');}catch(e){}
+let af='all';
+
+function save(){try{localStorage.setItem('da15v2',JSON.stringify(done));}catch(e){}}
+
+function updateProgress(){
+  const n=done.length;
+  document.getElementById('done-count').textContent=n;
+  document.getElementById('done-pct').textContent=Math.round(n/15*100)+'%';
+  document.getElementById('main-prog').style.width=(n/15*100)+'%';
+  document.getElementById('mini-fill').style.width=(n/15*100)+'%';
+  document.getElementById('mini-stat').textContent=n+' / 15 days';
+  ['s','p','st','bi','cs','bh'].forEach(c=>{
+    const total=DAYS.filter(d=>d.c===c).length;
+    const doneCount=done.filter(id=>DAYS.find(d=>d.d===id&&d.c===c)).length;
+    document.getElementById('ts-'+c).textContent=doneCount+'/'+total;
+  });
+}
+
+function renderDays(f){
+  const con=document.getElementById('day-grid-container');
+  con.innerHTML='';
+  let lastWk=0;
+  const filtered=DAYS.filter(d=>f==='all'||d.c===f);
+  filtered.forEach(d=>{
+    if(f==='all'&&d.wk!==lastWk){
+      lastWk=d.wk;
+      const sep=document.createElement('div');
+      sep.className='week-sep';
+      sep.innerHTML=`<span>Week ${d.wk}</span><div></div>`;
+      const g=document.createElement('div');
+      g.className='day-grid';
+      g.id='wk-grid-'+d.wk;
+      con.appendChild(sep);
+      con.appendChild(g);
+    }
+    const grid=f==='all'?document.getElementById('wk-grid-'+d.wk):getOrCreateGrid(con);
+    const isDone=done.includes(d.d);
+    const card=document.createElement('div');
+    card.className='day-card'+(isDone?' completed':'');
+    card.innerHTML=`<div class="dc-top"><span class="dc-num">Day ${d.d}</span><span class="cat-badge ${catCls[d.c]}">${catName[d.c]}</span></div><h3>${d.tl}</h3><p class="fx">${d.fx}</p><div class="tag-row">${d.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div><div class="dc-footer"><span class="dc-time">⏱ ${d.tm}</span><button class="check-btn${isDone?' on':''}" aria-label="${isDone?'Mark incomplete':'Mark done'}" onclick="toggleDone(event,${d.d})">${isDone?'✓':''}</button></div>`;
+    card.addEventListener('click',e=>{if(!e.target.closest('.check-btn'))openModal(d);});
+    grid.appendChild(card);
+  });
+}
+
+let _singleGrid=null;
+function getOrCreateGrid(con){
+  if(!_singleGrid){_singleGrid=document.createElement('div');_singleGrid.className='day-grid';con.appendChild(_singleGrid);}
+  return _singleGrid;
+}
+
+function toggleDone(e,n){
+  e.stopPropagation();
+  const i=done.indexOf(n);
+  if(i===-1)done.push(n);else done.splice(i,1);
+  save();updateProgress();_singleGrid=null;renderDays(af);
+}
+
+function openModal(d){
+  document.getElementById('m-title').textContent=`Day ${d.d} — ${d.tl}`;
+  document.getElementById('m-sub').textContent=`${catName[d.c]} · ${d.tm} · ${d.fx}`;
+  document.getElementById('m-topics').innerHTML=d.tp.map(t=>`<li><span class="li-dot">·</span><span>${t}</span></li>`).join('');
+  document.getElementById('m-tasks').innerHTML=d.tk.map(t=>`<li><span class="li-dot">✓</span><span>${t}</span></li>`).join('');
+  document.getElementById('m-links').innerHTML=d.links.map(l=>`<a class="mlink" href="${l.u}" target="_blank">${l.n}<span class="mlink-badge ${l.f?'free-tag':'paid-tag'}">${l.f?'Free':'Paid'}</span></a>`).join('');
+  document.getElementById('modal-bg').classList.add('open');
+}
+
+document.getElementById('modal-close').addEventListener('click',()=>document.getElementById('modal-bg').classList.remove('open'));
+document.getElementById('modal-bg').addEventListener('click',e=>{if(e.target===document.getElementById('modal-bg'))document.getElementById('modal-bg').classList.remove('open');});
+
+document.querySelectorAll('.fpill').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.fpill').forEach(p=>p.classList.remove('on'));
+    this.classList.add('on');
+    af=this.dataset.f;_singleGrid=null;
+    renderDays(af);
+  });
+});
+
+function switchTab(id,el){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el)el.classList.add('active');
+}
+
+function filterDays(f){
+  af=f;
+  document.querySelectorAll('.fpill').forEach(p=>{p.classList.remove('on');if(p.dataset.f===f)p.classList.add('on');});
+  _singleGrid=null;renderDays(f);
+}
+
+function toggleFaq(el){
+  const item=el.parentElement;
+  item.classList.toggle('open');
+}
+
+renderDays('all');
+updateProgress();
+</script>
+</body>
+</html>
